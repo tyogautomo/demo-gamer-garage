@@ -1,5 +1,7 @@
 const Model = require('../models/index.js')
 const User = Model.User
+const Game = Model.Game
+const UserGame = Model.UserGame
 
 let bcrypt = require('bcryptjs')
 
@@ -58,11 +60,19 @@ class ControllerUser {
         User.findOne({
                 where: {
                     id: req.session.currentUser.id
+                },
+                include: {
+                    model: UserGame,
+                    include: {
+                        model: Game
+                    }
                 }
             })
             .then(user => {
+                console.log(JSON.stringify(user, null, 2))
                 if (user) {
                     res.render('user-page.ejs', {
+                        games: user.dataValues.UserGames,
                         balance: user.balance,
                         user: req.session.currentUser || null
                     })
@@ -75,11 +85,6 @@ class ControllerUser {
             })
     }
 
-    static logout(req, res) {
-        req.session.currentUser = {}
-        res.redirect('/')
-    }
-
     static topUp(req, res) {
         User.findOne({
                 where: {
@@ -88,7 +93,7 @@ class ControllerUser {
             })
             .then(user => {
                 res.render('topup.ejs', {
-
+                    user: user.dataValues
                 })
             })
             .catch(err => {
@@ -99,35 +104,43 @@ class ControllerUser {
 
     static pay(req, res) {
         let currentBalance = 0;
+
         User.findOne({
                 where: {
                     id: req.params.id
                 }
             })
             .then(user => {
-                console.log(user.balance)
-                currentBalance = user.balance
+                // console.log(user.dataValues)
+                currentBalance = user.dataValues.balance
+                // console.log(req.body.money)
+                // res.send(user.dataValues.balance)
+                let money = currentBalance + Number(req.body.money)
+                console.log(money)
+                return money
             })
+
+            .then(money => {
+                let update = {
+                    balance: money
+                }
+                User.update(update, {
+                        where: {
+                            id: req.params.id
+                        }
+                    })
+                    .then(() => {
+                        res.redirect(`/`)
+                    })
+                    .catch(err => {
+                        res.send(err)
+                    })
+            })
+
             .catch(err => {
                 res.send(err)
             })
 
-        // console.log(currentBalance)
-        let money = currentBalance + req.body.money
-        let update = {
-            balance: money
-        }
-        User.update(update, {
-                where: {
-                    id: req.params.id
-                }
-            })
-            .then(() => {
-                res.redirect(`/`)
-            })
-            .catch(err => {
-                res.send(err)
-            })
     }
 }
 

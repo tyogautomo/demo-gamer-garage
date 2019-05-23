@@ -33,6 +33,7 @@ class ControllerGame {
             .then(allGames => {
                 // console.log(allGames)
                 res.render('games.ejs', {
+                    user: req.session.currentUser,
                     allGames: allGames
                 })
             })
@@ -60,21 +61,51 @@ class ControllerGame {
 
     static buy(req, res) {
 
-        if (req.session.currentUser) {
-            let data = {
-                UserId: req.session.currentUser.id,
-                GameId: req.params.gamesId
-            }
 
-            UserGame.create(data)
-                .then(() => {
-                    res.send(`success`)
+        if (req.session.currentUser) {
+
+            User.findOne({
+                    where: {
+                        id: req.session.currentUser.id
+                    }
                 })
-                .catch(err => {
-                    res.send(err)
+                .then(user => {
+                    // res.send(user)
+                    return user.balance
+                })
+
+
+                .then(userBalance => {
+                    let data = {
+                        UserId: req.session.currentUser.id,
+                        GameId: req.params.gamesId
+                    }
+                    Game.findByPk(req.params.gamesId)
+                        .then(game => {
+                            if (userBalance >= game.dataValues.price) {
+                                UserGame.create(data)
+                                    .then(() => {
+                                        let change = userBalance - game.dataValues.price
+                                        let update = {
+                                            balance: change
+                                        }
+                                        console.log(change)
+                                        User.update(update, {
+                                                where: {
+                                                    id: req.session.currentUser.id
+                                                }
+                                            })
+                                            .then(() => {
+                                                res.send(`SUCCESS!!`)
+                                            })
+                                    })
+                            } else {
+                                res.send(`Not enough money`)
+                            }
+                        })
                 })
         } else {
-            res.send(`You must login first`)
+            res.render('loginfirst.ejs')
         }
     }
 

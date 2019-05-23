@@ -17,6 +17,14 @@
     <h2>Your Balance: <%= balance %></h2>
     <h2>Your Games:</h2>
 
+    <ol>
+        <%for(let i = 0; i < games.length; i++) {%>
+        <li>
+            <%= games[i].Game.name %>
+        </li>
+        <%}%>
+    </ol>
+
 
 </body>
 

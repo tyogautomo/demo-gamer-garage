@@ -11,7 +11,7 @@
 <body>
 
     <h1>TOP UP</h1>
-    <form method="POST">
+    <form action="/topup/<%= user.id %>" method="POST">
         <label for="money">Amount</label>
         <input type="number" name="money" id="money">
         <button type="submit">TOP UP</button>

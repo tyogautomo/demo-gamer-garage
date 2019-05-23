@@ -32,6 +32,10 @@ app.use('/', routerHome)
 app.use('/users', routerUser)
 app.use('/register', routerUser)
 app.use('/login', routerLogin)
+app.use('/logout', (req, res) => {
+    req.session.currentUser = {}
+    res.redirect('/')
+})
 app.use('/games', routerGame)
 app.use('/topup', routerTopUp)
 

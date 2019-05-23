@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     UserGame.belongsTo(models.Game, {
       foreignKey: 'GameId'
     })
-    UserGame.belongsTo(models.Game, {
+    UserGame.belongsTo(models.User, {
       foreignKey: 'UserId'
     })
   };

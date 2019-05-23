@@ -9,6 +9,5 @@ router.get('/', (req, res) => {
 router.post('/', ControllerUser.register)
 
 router.get('/:username', ControllerUser.userPage)
-router.get('/logout', ControllerUser.logout)
 
 module.exports = router;
