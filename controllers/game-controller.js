@@ -3,8 +3,25 @@ const Game = Model.Game
 const User = Model.User
 const UserGame = Model.UserGame
 
-
 class ControllerGame {
+
+    static add(req, res) {
+        let newGame = {
+            name: req.body.name,
+            price: Number(req.body.price),
+            rating: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            image_location: req.body.image_location
+        }
+        Game.create(newGame)
+            .then(() => {
+                res.redirect('/games')
+            })
+            .catch(err => {
+                res.send(err)
+            })
+    }
 
     static getFive(req, res) {
         Game.findAll({
@@ -32,10 +49,16 @@ class ControllerGame {
             })
             .then(allGames => {
                 // console.log(allGames)
-                res.render('games.ejs', {
-                    user: req.session.currentUser,
-                    allGames: allGames
-                })
+                if (req.session.currentUser) {
+                    res.render('games.ejs', {
+                        user: req.session.currentUser,
+                        allGames: allGames
+                    })
+                } else {
+                    res.render('games.ejs', {
+                        allGames: allGames
+                    })
+                }
             })
             .catch(err => {
                 res.send(err)
@@ -62,8 +85,7 @@ class ControllerGame {
     static buy(req, res) {
 
 
-        if (req.session.currentUser) {
-
+        if (req.session.currentUser.id != undefined) {
             User.findOne({
                     where: {
                         id: req.session.currentUser.id
@@ -73,7 +95,6 @@ class ControllerGame {
                     // res.send(user)
                     return user.balance
                 })
-
 
                 .then(userBalance => {
                     let data = {
@@ -109,6 +130,71 @@ class ControllerGame {
         }
     }
 
+    static displayList(req, res) {
+        if (req.session.currentUser != undefined) {
+            if (req.session.currentUser.name == 'admin') {
+                Game.findAll()
+                    .then(games => {
+                        res.render('edit.ejs', {
+                            games: games
+                        })
+                    })
+
+                    .catch(err => {
+                        res.send(err)
+                    })
+            } else {
+                res.send(`You're not an Admin`)
+            }
+        } else {
+            res.render(`loginfirst.ejs`)
+        }
+    }
+
+    static displayEdit(req, res) {
+        Game.findByPk(req.params.id)
+            .then(game => {
+                res.render('edit.ejs', {
+                    game: game.dataValues
+                })
+            })
+            .catch(err => {
+                res.send(err)
+            })
+    }
+
+    static update(req, res) {
+        let updated = {
+            name: req.body.name,
+            price: Number(req.body.price),
+            image_location: req.body.image_location
+        }
+        Game.update(updated, {
+                where: {
+                    id: req.params.id
+                }
+            })
+            .then(() => {
+                res.redirect('/games')
+            })
+            .catch(err => {
+                res.send(err)
+            })
+    }
+
+    static delete(req, res) {
+        Game.destroy({
+                where: {
+                    id: req.params.id
+                }
+            })
+            .then(() => {
+                res.redirect('/games')
+            })
+            .catch(err => {
+                res.send(err)
+            })
+    }
 }
 
 module.exports = ControllerGame;

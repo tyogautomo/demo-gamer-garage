@@ -14,7 +14,6 @@ app.use(session({
     saveUninitialized: true
 }))
 
-
 const routerHome = require('./routes/home-routes.js')
 const routerUser = require('./routes/user-route.js')
 const routerLogin = require('./routes/login-route.js')
@@ -32,11 +31,11 @@ app.use('/', routerHome)
 app.use('/users', routerUser)
 app.use('/register', routerUser)
 app.use('/login', routerLogin)
+app.use('/games', routerGame)
 app.use('/logout', (req, res) => {
     req.session.currentUser = {}
     res.redirect('/')
 })
-app.use('/games', routerGame)
 app.use('/topup', routerTopUp)
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

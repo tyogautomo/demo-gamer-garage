@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <title>GameGarage | Games</title>
+    <title>GamerGarage | Games</title>
     <style>
         * {
             margin: 0;
@@ -46,7 +46,11 @@
     <div class="all">
 
         <h1>Games List</h1>
-
+        <%if(user != undefined) {%>
+        <%if(user.name == 'admin') {%>
+        <a href="/games/add">Add new Game</a>
+        <%}%>
+        <%}%>
         <ul>
             <% for (let i = 0; i < allGames.length; i++) { %>
             <li class="gameslist">
@@ -55,11 +59,19 @@
                     <span class="title"><%= allGames[i].dataValues.name %></span>
                     <br>
                     <a href="/games/buy/<%= allGames[i].id %>">Checkout</a>
+                    <%if(user != undefined) {%>
+                    <%if(user.name == 'admin') {%>
+                    <a href="/games/edit/<%= allGames[i].id %>">Edit</a>
+                    <a href="/games/delete/<%= allGames[i].id %>" onclick="return confirm('Are you sure?')">Delete</a>
+                    <%}%>
+                    <%}%>
                 </div>
             </li>
             <%}%>
         </ul>
+
     </div>
+
 
 </body>
 
