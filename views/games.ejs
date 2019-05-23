@@ -7,16 +7,11 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <title>GameGarage | Home</title>
+    <title>GameGarage | Games</title>
     <style>
         * {
             margin: 0;
             padding: 0;
-        }
-
-        img {
-            width: 100px;
-            height: 100px;
         }
 
         li.gameslist {
@@ -50,23 +45,20 @@
 
     <div class="all">
 
-        <h1>Top 5 Games</h1>
+        <h1>Games List</h1>
 
         <ul>
             <% for (let i = 0; i < allGames.length; i++) { %>
             <li class="gameslist">
                 <div class="game">
-                    <form action="/games/buy/:gamesId" method="POST">
-                        <div class="image"></div>
-                        <span class="title"><%= allGames[i].dataValues.name %></span>
-                        <br>
-                        <a href="/games/buy/<%= allGames[i].id %>">Checkout</a>
-                    </form>
+                    <div class="image"></div>
+                    <span class="title"><%= allGames[i].dataValues.name %></span>
+                    <br>
+                    <a href="/games/buy/<%= allGames[i].id %>">Checkout</a>
                 </div>
             </li>
             <%}%>
         </ul>
-
     </div>
 
 </body>
